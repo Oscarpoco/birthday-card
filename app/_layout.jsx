@@ -123,12 +123,13 @@ export default function RootLayout() {
           <Text style={styles.sectionTitle}>Create Your Birthday Card</Text>
           
           <TextInput
-            placeholder="Enter your birthday message..."
+            placeholder="Enter your birthday message... max 150 characters"
             value={cardText}
             onChangeText={setCardText}
             style={styles.textInput}
             multiline
             numberOfLines={4}
+            maxLength={150}
           />
         </View>
 
@@ -389,6 +390,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 25,
     marginBottom: 20,
+    width: '100%', 
+    justifyContent: 'center'
   },
   imagePreviewContainer: {
     alignItems: 'center',
@@ -446,6 +449,7 @@ const styles = StyleSheet.create({
   savedCardsContainer: {
     flex: 1,
     padding: 20,
+    paddingVertical: 40
   },
   savedCard: {
     backgroundColor: 'white',
@@ -495,6 +499,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignSelf: 'center',
     marginTop: 20,
-    marginBottom: 40,
+    marginBottom: 80,
   },
 });
