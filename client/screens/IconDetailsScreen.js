@@ -9,14 +9,15 @@ import { useNavigation } from '@react-navigation/native';
 const colors = ['#FF69B4', '#87CEEB', '#98FB98', '#DDA0DD', '#F0E68C', '#FF7F50'];
 
 export const IconDetailScreen = ({ route }) => {
-  const { editCard, image } = route.params;
+  const { editCard = null, image = null, setSelectedCard } = route.params;
   const [wish, setWish] = useState(editCard?.wish || '');
   const [textColor, setTextColor] = useState(editCard?.textColor || colors[0]);
   const [fontSize, setFontSize] = useState(editCard?.fontSize || 16);
   const navigation = useNavigation();
+  const defaultLottie = { id: 3, source: require('../assets/birthday-animation.json') }
 
   const getLottieSource = () => {
-    return editCard?.image || image;
+    return editCard?.image || image || defaultLottie.source;
   };
 
   const saveCard = async () => {
@@ -26,7 +27,7 @@ export const IconDetailScreen = ({ route }) => {
       
       const newCard = {
         id: editCard?.id || Date.now().toString(),
-        image, 
+        image: editCard?.image || image, 
         wish,
         textColor,
         fontSize,
@@ -39,15 +40,22 @@ export const IconDetailScreen = ({ route }) => {
       }
 
       await AsyncStorage.setItem('birthdayCards', JSON.stringify(cards));
+      if(editCard) {
+        setSelectedCard(null);
+      }
       navigation.navigate('Cards');
       Toast.show({
         type: 'success',
-        text1: editCard ? 'Card updated successfully' : 'Card created successfully',
+        text1: 'Success',
+        text2: editCard ? 'Card updated successfully' : 'Card created successfully',
+        position: 'bottom'
       });
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Error saving card',
+        text1: 'Error',
+        text2: 'Error saving card',
+        position: 'bottom'
       });
     }
   };
