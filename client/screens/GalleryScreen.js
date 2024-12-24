@@ -9,19 +9,26 @@ import {
   Dimensions
 } from 'react-native';
 
+// EXTRA IMPORTS
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FAB } from 'react-native-paper';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
 
+// DIMENSIONS
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.92;
+// ENDS
 
 export const CardsScreen = ({ navigation }) => {
+
+// LOCAL STATE
   const [cards, setCards] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+//   ENDS
 
+// FETCH CARDS FROM STORAGE
     useEffect(() => {
         const loadCards = async () => {
             try {
@@ -34,7 +41,7 @@ export const CardsScreen = ({ navigation }) => {
             }
         };
         loadCards();
-    }, [selectedCard]);
+    }, [navigation]);
 
     const loadCards = async () => {
         try {
@@ -46,9 +53,11 @@ export const CardsScreen = ({ navigation }) => {
             console.error('Error loading cards:', error);
         }
     };
+// ENDS
 
   
 
+// DELETE CARD FROM STORAGE
   const deleteCard = async (id) => {
     try {
       const updatedCards = cards.filter(card => card.id !== id);
@@ -65,7 +74,9 @@ export const CardsScreen = ({ navigation }) => {
       console.error('Error deleting card:', error);
     }
   };
+//   ENDS
 
+// RENDER CARDS
   const renderCard = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
@@ -85,18 +96,29 @@ export const CardsScreen = ({ navigation }) => {
       </View>
       <View style={styles.cardContent}>
         <Text style={styles.wishText}>{item.wish}</Text>
-        <Text style={styles.dateText}>Created on {new Date(item.createdAt).toLocaleDateString()}</Text>
+        <Text style={styles.dateText}>Created on {new Date(item.date).toLocaleDateString()}</Text>
       </View>
     </TouchableOpacity>
   );
 
+//   EMPTY LIST
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
+        <View style={{ backgroundColor: '#f0f2f5', padding: 10 }}>
+            <LottieView
+            source={require('../assets/card2.json')}
+            autoPlay
+            loop
+            style={{ height: 200, width: 100}}
+            resizeMode="cover"
+            />
+        </View>
     
       <Text style={styles.emptyText}>No birthday cards yet</Text>
       <Text style={styles.emptyText}>Create your first birthday card!</Text>
     </View>
   );
+//   ENDS
 
   return (
     <View style={styles.container}>
@@ -175,7 +197,8 @@ const styles = StyleSheet.create({
 
     cardContainer: 
     {
-      padding: 20,
+      paddingTop: 20,
+      paddingBottom: 70,
       paddingHorizontal: 10,
       alignItems: 'center',
     },
@@ -231,6 +254,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
+      marginBottom: 100
     },
 
     emptyText: 
@@ -238,10 +262,11 @@ const styles = StyleSheet.create({
       fontSize: 18,
       color: '#95a5a6',
       textAlign: 'center',
-      marginTop: 10,
+      marginTop: 15,
+      letterSpacing: 1
     },
 
-    // Modal Styles
+    // MODAL STYLE
     modalBackground: 
     {
       flex: 1,
@@ -314,11 +339,14 @@ const styles = StyleSheet.create({
       marginLeft: 10,
     },
 
+    // FAB STYLING
+
     fab: 
     {
       position: 'absolute',
-      right: 16,
+      right: 15,
       bottom: 90,
-      backgroundColor: '#3498db',
+      backgroundColor: '#1BA3A3',
+      borderRadius: 10
     },
   });

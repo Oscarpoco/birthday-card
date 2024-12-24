@@ -1,19 +1,26 @@
 import React from 'react';
+
+// NAVIGATIONS
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import Toast from 'react-native-toast-message';
+
+// SCREENS
 import { CardsScreen } from './screens/GalleryScreen';
 import {CreateScreen} from './screens/CreateCardScreen';
 import { SplashScreen } from './screens/SplashScreen';
 import { IconDetailScreen } from './screens/IconDetailsScreen';
+
+// EXTRA IMPORTS
+import Toast from 'react-native-toast-message';
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, StyleSheet, Platform, Pressable } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 
+
+// NAVIGATION
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-
-
 
 const TabNavigator = () => {
   return (
@@ -21,17 +28,20 @@ const TabNavigator = () => {
       initialRouteName="Cards"
       screenOptions={{
         tabBarActiveTintColor: '#FF69B4',
-        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarInactiveTintColor: '#9BA3A3',
         tabBarButton: (props) => <Pressable {...props} style={props.style} />,
         tabBarShowLabel: true,
-        tabBarLabelStyle: {
+        tabBarLabelStyle: 
+        {
           fontSize: 13,
           fontWeight: '900',
           marginBottom: Platform.OS === 'ios' ? 0 : 8,
           letterSpacing: 1
         },
+
         headerShown: false,
-        tabBarStyle: {
+        tabBarStyle: 
+        {
           position: 'absolute',
           height: Platform.OS === 'ios' ? 85 : 70,
           backgroundColor: '#F8F9FA',
@@ -39,7 +49,8 @@ const TabNavigator = () => {
           borderTopRightRadius: 20,
           borderTopWidth: 0,
           shadowColor: '#000',
-          shadowOffset: {
+          shadowOffset: 
+          {
             width: 0,
             height: -4,
           },
@@ -51,6 +62,8 @@ const TabNavigator = () => {
         },
       }}
     >
+
+      {/* CARDS NAVIGATION */}
       <Tab.Screen
         name="Cards"
         component={CardsScreen}
@@ -66,12 +79,19 @@ const TabNavigator = () => {
             />
           ),
           headerShown: true,
-          title: 'Gallery'
+          title: 'Gallery',
+          headerTitleStyle: {
+            color: 'rgba(0, 0, 0, .5)', 
+            fontSize: 18,
+            fontWeight: 'bold',
+            letterSpacing: 1.5
+          },
         }}
       />
+      {/* ENDS */}
 
 
-
+      {/* CREATE SCREEN */}
       <Tab.Screen
         name="Create"
         component={IconDetailScreen}
@@ -94,9 +114,17 @@ const TabNavigator = () => {
           headerShown: true,
           title: 'Create',
           tabBarLabel: '',
+          headerTitleStyle: {
+            color: 'rgba(0, 0, 0, .5)', 
+            fontSize: 18,
+            fontWeight: 'bold',
+            letterSpacing: 1.5
+          },
         }}
       />
+      {/* ENDS */}
 
+      {/* TEMPLATES */}
       <Tab.Screen
         name="Template"
         component={CreateScreen}
@@ -112,9 +140,17 @@ const TabNavigator = () => {
             />
           ),
           headerShown: true,
-          title: 'Templates'
+          title: 'Templates',
+          headerTitleStyle: {
+            color: 'rgba(0, 0, 0, .5)', 
+            fontSize: 18,
+            fontWeight: 'bold',
+            letterSpacing: 1.5
+          },
         }}
       />
+      {/* ENDS */}
+
     </Tab.Navigator>
   );
 };
@@ -123,17 +159,52 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+
+        {/* SPLASH SCREEN */}
         <Stack.Screen name="Splash" component={SplashScreen} />
+        {/* ENDS */}
+
+        {/* MAIN SCREEN */}
         <Stack.Screen name="MainApp" component={TabNavigator} />
-        <Stack.Screen name="Templates" component={CreateScreen} />
+        {/* ENDS */}
+
+        {/* TEMPLATES */}
+        <Stack.Screen name="Templates" component={CreateScreen}
+          options={{
+            headerShown: true,
+            headerStyle: {
+            },
+            headerTitleStyle: {
+              color: 'rgba(0, 0, 0, .5)', 
+              fontSize: 18,
+              fontWeight: 'bold',
+              letterSpacing: 1
+            },
+          }}
+        />
+        {/* ENDS */}
+
+
+
+        {/* DETAILS SCREEN FOR CREATING THE CARD */}
         <Stack.Screen name="IconDetail" component={IconDetailScreen}
           options={{
             headerShown: true,
             title: 'Create',
           }}
         />
+        {/* ENDS */}
+
       </Stack.Navigator>
+
+      {/* STATUS BAR */}
+      <StatusBar barStyle="dark-content" backgroundColor='#fff' />
+      {/* ENDS */}
+
+      {/* TOAST */}
       <Toast />
+      {/* ENDS */}
+
     </NavigationContainer>
   );
 };
@@ -173,7 +244,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: 60,
     height: 60,
-    backgroundColor: '#FF69B4',
+    backgroundColor: '#1BA3A3',
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
