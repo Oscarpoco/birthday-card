@@ -178,7 +178,7 @@ const App = () => {
               color: 'rgba(0, 0, 0, .5)', 
               fontSize: 18,
               fontWeight: 'bold',
-              letterSpacing: 1
+              letterSpacing: 1,
             },
           }}
         />
@@ -198,7 +198,7 @@ const App = () => {
       </Stack.Navigator>
 
       {/* STATUS BAR */}
-      <StatusBar barStyle="dark-content" backgroundColor='#fff' />
+      <StatusBar barStyle="dark-content" backgroundColor='#FFF' />
       {/* ENDS */}
 
       {/* TOAST */}
