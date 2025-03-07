@@ -103,7 +103,7 @@ const TabNavigator = () => {
             <View style={styles.middleIcon}>
               <Ionicons
                 name="add"
-                size={32}
+                size={45}
                 color="#FFF"
                 style={{
                   transform: [{ scale: focused ? 1.1 : 1 }]
@@ -240,22 +240,16 @@ const styles = StyleSheet.create({
   middleIcon: 
   {
     position: 'absolute',
-    top: -20,
+    top: -50,
     alignSelf: 'center',
-    width: 60,
-    height: 60,
+    width: 80,
+    height: 80,
+    borderWidth: 5,
     backgroundColor: '#1BA3A3',
-    borderRadius: 30,
+    borderColor: '#FFf',
+    borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#FF69B4',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
     zIndex: 1,
   }
 });

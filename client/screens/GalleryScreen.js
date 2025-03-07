@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FAB } from 'react-native-paper';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
+import { useFocusEffect } from '@react-navigation/native';
 
 // DIMENSIONS
 const { width } = Dimensions.get('window');
@@ -29,33 +30,23 @@ export const CardsScreen = ({ navigation }) => {
 //   ENDS
 
 // FETCH CARDS FROM STORAGE
-    useEffect(() => {
-        const loadCards = async () => {
-            try {
-                const savedCards = await AsyncStorage.getItem('birthdayCards');
-                if (savedCards) {
-                    setCards(JSON.parse(savedCards));
-                }
-            } catch (error) {
-                console.error('Error loading cards:', error);
-            }
-        };
-        loadCards();
-    }, [navigation]);
-
-    const loadCards = async () => {
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadCards = async () => {
         try {
-            const savedCards = await AsyncStorage.getItem('birthdayCards');
-            if (savedCards) {
-                setCards(JSON.parse(savedCards));
-            }
+          const savedCards = await AsyncStorage.getItem('birthdayCards');
+          if (savedCards) {
+            setCards(JSON.parse(savedCards));
+          }
         } catch (error) {
-            console.error('Error loading cards:', error);
+          console.error('Error loading cards:', error);
         }
-    };
+      };
+      
+      loadCards();
+    }, [])
+  );
 // ENDS
-
-  
 
 // DELETE CARD FROM STORAGE
   const deleteCard = async (id) => {
@@ -95,7 +86,7 @@ export const CardsScreen = ({ navigation }) => {
         />
       </View>
       <View style={styles.cardContent}>
-        <Text style={styles.wishText}>{item.wish}</Text>
+        <Text style={[styles.wishText, {color: item.color}]}>{item.wish}</Text>
         <Text style={styles.dateText}>Created on {new Date(item.date).toLocaleDateString()}</Text>
       </View>
     </TouchableOpacity>
@@ -237,7 +228,7 @@ const styles = StyleSheet.create({
     wishText: 
     {
       fontSize: 16,
-      color: '#2c3e50',
+      // color: '#2c3e50',
       lineHeight: 24,
       marginBottom: 8,
     },

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Alert } from 'react-native';
 import { View, TextInput, TouchableOpacity, StyleSheet, Text } from 'react-native';
 
 // EXTRA IMPORTS
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Slider from '@react-native-community/slider';
 import Toast from 'react-native-toast-message';
 import LottieView from 'lottie-react-native';
 // ENDS
@@ -17,13 +17,30 @@ export const IconDetailScreen = ({ route, navigation }) => {
     // LOCAL STATE
     const { editCard = null, image = null, setSelectedCard } = route.params;
     const [wish, setWish] = useState(editCard?.wish || '');
+    const [isDirty, setIsDirty] = useState(false);
     const [textColor, setTextColor] = useState(editCard?.textColor || colors[0]);
     const [fontSize, setFontSize] = useState(editCard?.fontSize || 16);
     //   ENDS
 
-    // LOTTIE ANIMATION FROM THE TEMPLATE OR FROM DEFAULT
+   // LOTTIE ANIMATION FROM THE TEMPLATE OR FROM DEFAULT
     const getLottieSource = () => {
         return editCard?.image || image;
+    };
+    //   ENDS
+
+    // HANDLE FONT SIZE CHANGES
+    const decreaseFontSize = () => {
+        if (fontSize > 12) {
+            setFontSize(prevSize => Math.max(12, prevSize - 1));
+            setIsDirty(true);
+        }
+    };
+
+    const increaseFontSize = () => {
+        if (fontSize < 20) {
+            setFontSize(prevSize => Math.min(20, prevSize + 1));
+            setIsDirty(true);
+        }
     };
     //   ENDS
 
@@ -47,7 +64,6 @@ export const IconDetailScreen = ({ route, navigation }) => {
             //   IF EDITING CARD, UPDATE THE CARD
             if (editCard) {
                 cards = cards.map(card => card.id === editCard.id ? newCard : card);
-
             // ELSE , ADD THE NEW CARD
             } else {
                 cards.push(newCard);
@@ -62,8 +78,20 @@ export const IconDetailScreen = ({ route, navigation }) => {
             }
 
             //   NAVIGATE TO HOME
-            navigation.navigate('MainApp');
-            navigation.goBack();
+            try {
+                // Check if we're using stack navigation
+                const isStackNavigation = navigation.canGoBack();
+                
+                if (isStackNavigation) {
+                    navigation.goBack();
+                } else {
+                    navigation.navigate('MainApp');
+                }
+            } catch (error) {
+                navigation.navigate('MainApp');
+            }
+
+            // setWish('');
             
             Toast.show({
                 type: 'success',
@@ -95,7 +123,10 @@ export const IconDetailScreen = ({ route, navigation }) => {
             <TextInput
                 style={[styles.wishInput, { color: textColor, fontSize }]}
                 value={wish}
-                onChangeText={setWish}
+                onChangeText={(text) => {
+                    setWish(text);
+                    setIsDirty(true);
+                }}
                 placeholder="Enter your birthday wish..."
                 multiline
             />
@@ -105,20 +136,45 @@ export const IconDetailScreen = ({ route, navigation }) => {
                     <TouchableOpacity
                         key={color}
                         style={[styles.colorButton, { backgroundColor: color }]}
-                        onPress={() => setTextColor(color)}
+                        onPress={() => {
+                            setTextColor(color);
+                            setIsDirty(true);
+                        }}
                     />
                 ))}
             </View>
 
-            <Text style={styles.pixelText}>Font Size: {fontSize}px</Text>
-            <Slider
-                style={styles.slider}
-                minimumValue={12}
-                maximumValue={20}
-                step={1}
-                value={fontSize}
-                onValueChange={setFontSize}
-            />
+            {/* Custom Font Size Control with Buttons */}
+            <View style={styles.fontSizeContainer}>
+                <Text style={styles.fontSizeLabel}>Font Size: {fontSize}px</Text>
+                <View style={styles.fontSizeControls}>
+                    <TouchableOpacity 
+                        style={[styles.fontSizeButton, fontSize <= 12 && styles.disabledButton]} 
+                        onPress={decreaseFontSize}
+                        disabled={fontSize <= 12}
+                    >
+                        <Text style={styles.fontSizeButtonText}>-</Text>
+                    </TouchableOpacity>
+                    
+                    {/* Font Size Progress Bar */}
+                    <View style={styles.fontSizeProgressContainer}>
+                        <View 
+                            style={[
+                                styles.fontSizeProgress, 
+                                { width: `${((fontSize - 12) / 8) * 100}%` }
+                            ]} 
+                        />
+                    </View>
+                    
+                    <TouchableOpacity 
+                        style={[styles.fontSizeButton, fontSize >= 20 && styles.disabledButton]} 
+                        onPress={increaseFontSize}
+                        disabled={fontSize >= 20}
+                    >
+                        <Text style={styles.fontSizeButtonText}>+</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
 
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
@@ -131,7 +187,20 @@ export const IconDetailScreen = ({ route, navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.button, styles.cancelButton]}
-                    onPress={() => navigation.goBack()}
+                    onPress={() => {
+                        if (isDirty) {
+                            Alert.alert(
+                                "Unsaved Changes",
+                                "You have unsaved changes. Are you sure you want to go back?",
+                                [
+                                    { text: "Cancel", style: "cancel" },
+                                    { text: "OK", onPress: () => navigation.goBack() }
+                                ]
+                            );
+                        } else {
+                            navigation.goBack();
+                        }
+                    }}
                 >
                     <Text style={styles.buttonText}>Cancel</Text>
                 </TouchableOpacity>
@@ -141,30 +210,23 @@ export const IconDetailScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-
-    container:
-    {
+    container: {
         flex: 1,
         backgroundColor: '#fff',
-        padding: 20,
+        paddingHorizontal: 10,
+        paddingVertical: 20,
     },
-
-    lottieContainer:
-    {
+    lottieContainer: {
         height: 200,
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical: 10,
     },
-
-    lottieView:
-    {
+    lottieView: {
         width: 200,
         height: 200,
     },
-
-    wishInput:
-    {
+    wishInput: {
         borderWidth: 1,
         borderColor: '#ddd',
         borderRadius: 5,
@@ -173,16 +235,12 @@ const styles = StyleSheet.create({
         minHeight: 100,
         textAlignVertical: 'top',
     },
-
-    colorPicker:
-    {
+    colorPicker: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         marginVertical: 20,
     },
-
-    colorButton:
-    {
+    colorButton: {
         width: 40,
         height: 40,
         borderRadius: 20,
@@ -194,31 +252,66 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
     },
-
-    pixelText:
-    {
-        marginLeft: 10,
-        fontWeight: 600,
-        letterSpacing: 1
+    // New font size control styles
+    fontSizeContainer: {
+        marginVertical: 20,
+        paddingHorizontal: 10,
     },
-
-    slider:
-    {
-        width: '100%',
+    fontSizeLabel: {
+        marginBottom: 10,
+        fontWeight: '600',
+        letterSpacing: 1,
+        fontSize: 16,
+    },
+    fontSizeControls: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    fontSizeButton: {
+        width: 40,
         height: 40,
-        marginVertical: 10,
+        borderRadius: 20,
+        backgroundColor: '#FF69B4',
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
     },
-
-    buttonContainer:
-    {
+    fontSizeButtonText: {
+        fontSize: 35,
+        fontWeight: 600,
+        color: 'white',
+        textAlign: 'center',
+        lineHeight: 50
+    },
+    disabledButton: {
+        backgroundColor: '#f8bcd8',
+        elevation: 1,
+    },
+    fontSizeProgressContainer: {
+        flex: 1,
+        height: 10,
+        backgroundColor: '#eee',
+        marginHorizontal: 10,
+        borderRadius: 5,
+        overflow: 'hidden',
+    },
+    fontSizeProgress: {
+        height: '100%',
+        backgroundColor: '#FF69B4',
+        borderRadius: 5,
+    },
+    buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 10,
         paddingHorizontal: 10,
     },
-
-    button:
-    {
+    button: {
         paddingVertical: 12,
         paddingHorizontal: 30,
         borderRadius: 25,
@@ -226,19 +319,13 @@ const styles = StyleSheet.create({
         minWidth: 120,
         alignItems: 'center',
     },
-
-    saveButton:
-    {
+    saveButton: {
         backgroundColor: '#FF69B4',
     },
-
-    cancelButton:
-    {
+    cancelButton: {
         backgroundColor: '#ddd',
     },
-
-    buttonText:
-    {
+    buttonText: {
         color: '#000',
         fontSize: 16,
         fontWeight: '600',
