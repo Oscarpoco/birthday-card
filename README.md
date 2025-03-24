@@ -25,7 +25,7 @@ Before running this application, make sure you have the following installed:
 1. Clone the repository:
 ```bash
 git clone https://github.com/Oscarpoco/birthday-card.git
-cd birthday-cards
+cd birthday-card
 cd client
 ```
 
