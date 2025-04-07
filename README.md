@@ -36,16 +36,6 @@ npm install
 yarn install
 ```
 
-3. Install required packages:
-```bash
-npm install @react-navigation/native @react-navigation/bottom-tabs @react-navigation/stack
-npm install react-native-screens react-native-safe-area-context
-npm install react-native-gesture-handler react-native-reanimated
-npm install @react-native-async-storage/async-storage
-npm install react-native-toast-message
-npm install lottie-react-native
-npm install @react-native-community/slider
-```
 
 ## Project Structure
 
@@ -99,16 +89,9 @@ If you encounter any issues:
 
 1. Clear the Metro bundler cache:
 ```bash
-npx react-native start --reset-cache
+npm start -c
 ```
 
-2. Clean and rebuild the project:
-```bash
-cd android
-./gradlew clean
-cd ..
-npx react-native run-android
-```
 
 ## Contributing
 
